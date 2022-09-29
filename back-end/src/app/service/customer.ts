@@ -1,4 +1,4 @@
-import prisma from '../model/prisma';
+import prisma from '../../../prisma/client';
 
 const readTotalClientsByCity = async () => {
   const response = await prisma.customer.groupBy({
