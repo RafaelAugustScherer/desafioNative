@@ -1,0 +1,28 @@
+version: '3.9'
+name: desafio-native
+
+services:
+  back:
+    container_name: desafio-native-backend
+    build: .
+    ports:
+      - 3001:3001
+    environment:
+      - DATABASE_URL=mysql://root:root@desafio-native-db:3306/desafio_native
+    volumes:
+      - ./src:/desafio-native-backend/src
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.0.27
+    container_name: desafio-native-db
+    restart: always
+    ports:
+      - 3002:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10

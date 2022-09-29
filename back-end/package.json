@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "scripts": {
     "build": "npx -y tsc",
     "prestart": "npm run prisma:migrate && npm run build",
@@ -10,6 +13,10 @@
     "predev": "npm run prisma:migrate",
     "dev": "ts-node-dev src --watch src/app",
     "prisma:migrate": "npx prisma db push && npx prisma generate",
+    "prisma:seed": "npx prisma db seed",
+    "compose:up": "(docker-compose up -d --build)",
+    "compose:down": "(docker-compose down --remove-orphans)",
+    "compose:reset": "npm run compose:down && npm run compose:up",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
