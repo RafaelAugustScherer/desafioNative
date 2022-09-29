@@ -4,7 +4,7 @@ import CustomerController from '../controller/customer';
 const customerRouter = Router();
 
 customerRouter.get(
-  '/groupby/city',
+  '/total/by/city',
   CustomerController.readTotalClientsByCity,
 );
 
