@@ -5,7 +5,7 @@ const customerRouter = Router();
 
 customerRouter.get(
   '/total/by/city',
-  CustomerController.readTotalClientsByCity,
+  CustomerController.readTotalCustomersByCity,
 );
 
 export default customerRouter;

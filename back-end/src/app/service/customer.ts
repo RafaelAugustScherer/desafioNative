@@ -6,7 +6,7 @@ interface customersByCity {
   customers_total: number,
 }
 
-const readTotalClientsByCity = async () => {
+const readTotalCustomersByCity = async () => {
   const response = await prisma.customer.findMany();
 
   const customersByCity = response.reduce((acc: customersByCity[], cur: Customer) => {
@@ -23,5 +23,5 @@ const readTotalClientsByCity = async () => {
 };
 
 export default {
-  readTotalClientsByCity,
+  readTotalCustomersByCity,
 };
