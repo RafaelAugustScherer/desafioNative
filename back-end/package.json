@@ -18,7 +18,7 @@
     "compose:down": "(docker-compose down --remove-orphans)",
     "compose:reset": "npm run compose:down && npm run compose:up",
     "compose:up:db": "(docker-compose up -d --build db --wait)",
-    "test": "jest -i ./src/test",
+    "test": "npm run test:unit && npm run test:integration",
     "test:unit": "jest ./src/test/unit",
     "pretest:integration": "npm run compose:down && dotenv -e .env.test npm run compose:up:db && dotenv -e .env.test npm run prisma:migrate",
     "test:integration": "dotenv -e .env.test jest ./src/test/integration"
