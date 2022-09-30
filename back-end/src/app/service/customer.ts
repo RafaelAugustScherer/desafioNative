@@ -1,4 +1,5 @@
 import { Customer } from '@prisma/client';
+import ERRORS from '../helper/error';
 import IContext from '../interface/IContext';
 
 interface customersByCity {
@@ -10,9 +11,15 @@ const readAllByFilter = (filter: Partial<Customer>, ctx: IContext) => (
   ctx.prisma.customer.findMany({ where: filter })
 );
 
-const readById = (id: number, ctx: IContext) => (
-  ctx.prisma.customer.findUnique({ where: { id } })
-);
+const readById = async (id: number, ctx: IContext) => {
+  const response = await ctx.prisma.customer.findUnique({ where: { id } });
+
+  if (!response) {
+    throw ERRORS.CUSTOMER.NOT_FOUND;
+  }
+
+  return response;
+};
 
 const readTotalCustomersByCity = async (ctx: IContext) => {
   const response = await ctx.prisma.customer.findMany();
