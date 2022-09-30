@@ -8,7 +8,7 @@ services:
     ports:
       - 3001:3001
     environment:
-      - DATABASE_URL=mysql://root:root@desafio-native-db:3306/desafio_native
+      - DATABASE_URL=${DATABASE_URL:-mysql://root:root@desafio-native-db:3306/desafio_native}
     volumes:
       - ./src:/desafio-native-backend/src
     depends_on:
