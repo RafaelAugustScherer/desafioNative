@@ -8,6 +8,13 @@ const readAllByFilter: IControllerRequestHandler = async (req, res, _next, ctx) 
   res.status(StatusCodes.OK).json(response);
 };
 
+const readById: IControllerRequestHandler = async (req, res, _next, ctx) => {
+  const { id } = req.params;
+  const response = await CustomerService.readById(+id, ctx);
+
+  res.status(StatusCodes.OK).json(response);
+};
+
 const readTotalCustomersByCity: IControllerRequestHandler = async (_req, res, _next, ctx) => {
   const response = await CustomerService.readTotalCustomersByCity(ctx);
 
@@ -16,5 +23,6 @@ const readTotalCustomersByCity: IControllerRequestHandler = async (_req, res, _n
 
 export default {
   readAllByFilter,
+  readById,
   readTotalCustomersByCity,
 };
