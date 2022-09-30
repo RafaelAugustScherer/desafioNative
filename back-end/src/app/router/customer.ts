@@ -15,6 +15,14 @@ customerRouter.route('/')
     ),
   );
 
+customerRouter.route('/:id')
+  .get(
+    CustomerMiddleware.validateReadById,
+    (req, res, next) => (
+      CustomerController.readById(req, res, next, ctx)
+    ),
+  );
+
 customerRouter.get(
   '/total/by/city',
   (req, res, next) => (
