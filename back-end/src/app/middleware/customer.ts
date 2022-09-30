@@ -6,6 +6,12 @@ const validateFilter: IMiddlewareRequestHandler = async (req, _res, next) => {
   next();
 };
 
+const validateReadById: IMiddlewareRequestHandler = async (req, _res, next) => {
+  await CustomerSchema.readById.validateAsync(req.params);
+  next();
+};
+
 export default {
   validateFilter,
+  validateReadById,
 };
