@@ -3,7 +3,7 @@ import { Customer } from '@prisma/client';
 
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 
-type CustomerCreate = Optional<Customer, 'id'>;
+export type CustomerCreate = Optional<Customer, 'id'>;
 
 interface mockCustomerProps {
   withId: boolean
