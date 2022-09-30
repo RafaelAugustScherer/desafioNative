@@ -6,6 +6,10 @@ interface customersByCity {
   customers_total: number,
 }
 
+const readAllByFilter = (filter: Partial<Customer>, ctx: IContext) => (
+  ctx.prisma.customer.findMany({ where: filter })
+);
+
 const readTotalCustomersByCity = async (ctx: IContext) => {
   const response = await ctx.prisma.customer.findMany();
 
@@ -23,5 +27,6 @@ const readTotalCustomersByCity = async (ctx: IContext) => {
 };
 
 export default {
+  readAllByFilter,
   readTotalCustomersByCity,
 };
