@@ -100,4 +100,64 @@ describe('Test Customer Routes', () => {
       expect(response.body).toHaveProperty('error');
     });
   });
+
+  describe('Test PATCH /customer/:id', () => {
+    const mockedPayload = { last_name: faker.name.lastName() };
+
+    beforeEach(async () => {
+      const mockedCustomers = generateMockCustomers(100);
+      await createCustomers(mockedCustomers);
+    });
+
+    it('Should update and return updated customer', async () => {
+      const dbCustomers = await prisma.customer.findMany();
+
+      const response = await requester
+        .patch(`/customer/${dbCustomers[50].id}`)
+        .send(mockedPayload);
+
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toMatchObject(
+        { ...dbCustomers[50], ...mockedPayload },
+      );
+
+      const updatedCustomer = await prisma.customer.findUnique(
+        { where: { id: dbCustomers[50].id } },
+      );
+      expect(updatedCustomer).toBeDefined();
+      expect(updatedCustomer?.last_name).toBe(mockedPayload.last_name);
+    });
+
+    it('Should return not found error in case of nonexistent id', async () => {
+      const response = await requester
+        .patch('/customer/0')
+        .send(mockedPayload);
+
+      expect(response.status).toBe(StatusCodes.NOT_FOUND);
+      expect(response.body).toHaveProperty('error');
+    });
+
+    it('Should return bad request error in case of invalid id', async () => {
+      const mockWord = faker.random.word();
+
+      const response = await requester
+        .patch(`/customer/${mockWord}`)
+        .send(mockedPayload);
+
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body).toHaveProperty('error');
+    });
+
+    it('Should return bad request error in case of invalid body', async () => {
+      const mockId = faker.random.numeric();
+      const dbCustomers = await prisma.customer.findMany();
+
+      const response = await requester
+        .patch(`/customer/${dbCustomers[50].id}`)
+        .send({ id: mockId });
+
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body).toHaveProperty('error');
+    });
+  });
 });
