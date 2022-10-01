@@ -61,4 +61,43 @@ describe('Test Customer Middleware', () => {
       expect(next).not.toHaveBeenCalled();
     });
   });
+
+  describe('Test validateUpdateById', () => {
+    it('Should correctly validate valid request', async () => {
+      const mockId = faker.random.numeric();
+      const mockedCustomer = generateMockCustomer();
+
+      req.params = { id: mockId };
+      req.body = mockedCustomer;
+
+      await CustomerMiddleware.validateUpdateById(req, res, next);
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('Should throw an error when id is a string', async () => {
+      const mockId = faker.random.word();
+      req.params = { id: mockId };
+
+      try {
+        await CustomerMiddleware.validateUpdateById(req, res, next);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ValidationError);
+      }
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('Should throw an error when an invalid field is present', async () => {
+      const mockId = faker.random.numeric();
+
+      req.params = { id: mockId };
+      req.body = { id: faker.random.numeric() };
+
+      try {
+        await CustomerMiddleware.validateUpdateById(req, res, next);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ValidationError);
+      }
+      expect(next).not.toHaveBeenCalled();
+    });
+  });
 });

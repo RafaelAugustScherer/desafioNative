@@ -54,9 +54,15 @@ describe('Test Customer Controller', () => {
   });
 
   describe('Test readById', () => {
-    it('Should respond with correct values when customer is found', async () => {
+    const mockRequest = () => {
       const mockedCustomer = generateMockCustomer({ withId: true }) as Customer;
       req.params = { id: String(mockedCustomer.id) };
+
+      return mockedCustomer;
+    };
+
+    it('Should respond with correct values when customer is found', async () => {
+      const mockedCustomer = mockRequest();
 
       jest.spyOn(CustomerService, 'readById').mockResolvedValue(mockedCustomer);
 
@@ -67,15 +73,51 @@ describe('Test Customer Controller', () => {
     });
 
     it('should throw exception when service throws an error', async () => {
-      const mockedCustomer = generateMockCustomer({ withId: true }) as Customer;
       const applicationError = generateApplicationError();
-      req.params = { id: String(mockedCustomer.id) };
+      mockRequest();
 
       jest.spyOn(CustomerService, 'readById')
         .mockRejectedValue(applicationError);
 
       try {
         const response = await CustomerController.readById(req, res, next, ctx);
+        expect(response).toBeUndefined();
+      } catch (e) {
+        expect(e).toBe(applicationError);
+      }
+    });
+  });
+
+  describe('Test updateById', () => {
+    const mockRequest = () => {
+      const mockedCustomer = generateMockCustomer({ withId: true }) as Customer;
+      req.params = { id: String(mockedCustomer.id) };
+      req.body = { last_name: mockedCustomer.last_name };
+
+      return mockedCustomer;
+    };
+
+    it('Should respond with correct values when customer is updated', async () => {
+      const mockedCustomer = mockRequest();
+
+      jest.spyOn(CustomerService, 'updateById')
+        .mockResolvedValue(mockedCustomer);
+
+      await CustomerController.updateById(req, res, next, ctx);
+
+      expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+      expect(res.json).toHaveBeenCalledWith(mockedCustomer);
+    });
+
+    it('should throw exception when service throws an error', async () => {
+      const applicationError = generateApplicationError();
+      mockRequest();
+
+      jest.spyOn(CustomerService, 'updateById')
+        .mockRejectedValue(applicationError);
+
+      try {
+        const response = await CustomerController.updateById(req, res, next, ctx);
         expect(response).toBeUndefined();
       } catch (e) {
         expect(e).toBe(applicationError);

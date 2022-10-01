@@ -79,4 +79,40 @@ describe('Test Customer Service', () => {
       expect(response).toEqual([]);
     });
   });
+
+  describe('Test updateById', () => {
+    it('Should update field and return new customer', async () => {
+      const mockedCustomer = generateMockCustomer({ withId: true }) as Customer;
+      const mockedPayload = { last_name: faker.name.lastName() };
+      const mockedResult = { ...mockedCustomer, ...mockedPayload };
+
+      ctx.prisma.customer.findUnique.mockResolvedValue(mockedCustomer);
+      ctx.prisma.customer.update.mockResolvedValue(mockedResult);
+
+      const response = await CustomerService.updateById(
+        mockedCustomer.id,
+        mockedPayload,
+        ctx,
+      );
+      expect(response).toEqual(mockedResult);
+    });
+
+    it('Should throw not found error when no customer is found by id', async () => {
+      const mockId = faker.datatype.number();
+      const mockedPayload = { last_name: faker.name.lastName() };
+
+      ctx.prisma.customer.findUnique.mockResolvedValue(null);
+
+      try {
+        const response = await CustomerService.updateById(
+          mockId,
+          mockedPayload,
+          ctx,
+        );
+        expect(response).toBeUndefined();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ApplicationError);
+      }
+    });
+  });
 });
