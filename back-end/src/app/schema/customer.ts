@@ -9,13 +9,13 @@ const readById = Joi.object({
 });
 
 const update = Joi.object({
-  first_name: Joi.string(),
-  last_name: Joi.string(),
-  email: Joi.string().email(),
-  gender: Joi.string(),
-  company: Joi.string(),
-  city: Joi.string(),
-  title: Joi.string(),
+  first_name: Joi.string().max(50),
+  last_name: Joi.string().max(50),
+  email: Joi.string().email().max(100),
+  gender: Joi.string().max(20),
+  company: Joi.string().max(50),
+  city: Joi.string().max(50),
+  title: Joi.string().max(50),
 }).strict();
 
 export default {
