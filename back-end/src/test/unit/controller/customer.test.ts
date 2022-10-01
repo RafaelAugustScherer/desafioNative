@@ -6,9 +6,11 @@ import CustomerController from '../../../app/controller/customer';
 import CustomerService from '../../../app/service/customer';
 import { MockContext, createMockContext } from '../../shared/prisma/context';
 import {
+  generateMockCustomer,
   generateMockCustomers,
   totalCustomersByCity,
 } from '../../shared/customer';
+import { generateApplicationError } from '../../shared/error';
 
 describe('Test Customer Controller', () => {
   const req = getMockReq();
@@ -47,9 +49,37 @@ describe('Test Customer Controller', () => {
       await CustomerController.readAllByFilter(req, res, next, ctx);
 
       expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.arrayContaining([]),
-      );
+      expect(res.json).toHaveBeenCalledWith([]);
+    });
+  });
+
+  describe('Test readById', () => {
+    it('Should respond with correct values when customer is found', async () => {
+      const mockedCustomer = generateMockCustomer({ withId: true }) as Customer;
+      req.params = { id: String(mockedCustomer.id) };
+
+      jest.spyOn(CustomerService, 'readById').mockResolvedValue(mockedCustomer);
+
+      await CustomerController.readById(req, res, next, ctx);
+
+      expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
+      expect(res.json).toHaveBeenLastCalledWith(mockedCustomer);
+    });
+
+    it('should throw exception when service throws an error', async () => {
+      const mockedCustomer = generateMockCustomer({ withId: true }) as Customer;
+      const applicationError = generateApplicationError();
+      req.params = { id: String(mockedCustomer.id) };
+
+      jest.spyOn(CustomerService, 'readById')
+        .mockRejectedValue(applicationError);
+
+      try {
+        const response = await CustomerController.readById(req, res, next, ctx);
+        expect(response).toBeUndefined();
+      } catch (e) {
+        expect(e).toBe(applicationError);
+      }
     });
   });
 
@@ -76,9 +106,7 @@ describe('Test Customer Controller', () => {
       await CustomerController.readTotalCustomersByCity(req, res, next, ctx);
 
       expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.arrayContaining([]),
-      );
+      expect(res.json).toHaveBeenCalledWith([]);
     });
   });
 });

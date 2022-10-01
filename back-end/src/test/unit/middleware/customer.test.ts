@@ -39,4 +39,26 @@ describe('Test Customer Middleware', () => {
       await Promise.all(testPromises);
     });
   });
+
+  describe('Test validateReadById', () => {
+    it('Should correctly validate valid id', async () => {
+      const mockId = faker.random.numeric();
+      req.params = { id: mockId };
+
+      await CustomerMiddleware.validateReadById(req, res, next);
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('Should throw an error when id is a string', async () => {
+      const mockId = faker.random.word();
+      req.params = { id: mockId };
+
+      try {
+        await CustomerMiddleware.validateReadById(req, res, next);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ValidationError);
+      }
+      expect(next).not.toHaveBeenCalled();
+    });
+  });
 });

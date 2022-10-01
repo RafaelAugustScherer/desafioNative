@@ -3,9 +3,11 @@ import { faker } from '@faker-js/faker';
 import CustomerService from '../../../app/service/customer';
 import { MockContext, createMockContext } from '../../shared/prisma/context';
 import {
+  generateMockCustomer,
   generateMockCustomers,
   totalCustomersByCity,
 } from '../../shared/customer';
+import { ApplicationError } from '../../../app/helper/error';
 
 describe('Test Customer Service', () => {
   let ctx: MockContext;
@@ -32,6 +34,30 @@ describe('Test Customer Service', () => {
 
       const response = await CustomerService.readAllByFilter({ city: mockCity }, ctx);
       expect(response).toEqual([]);
+    });
+  });
+
+  describe('Test readById', () => {
+    it('Should return found user by id', async () => {
+      const mockCustomer = generateMockCustomer({ withId: true }) as Customer;
+
+      ctx.prisma.customer.findUnique.mockResolvedValue(mockCustomer);
+
+      const response = await CustomerService.readById(mockCustomer.id, ctx);
+      expect(response).toEqual(mockCustomer);
+    });
+
+    it('Should throw not found error when no customer is found by id', async () => {
+      const mockId = faker.datatype.number();
+
+      ctx.prisma.customer.findUnique.mockResolvedValue(null);
+
+      try {
+        const response = await CustomerService.readById(mockId, ctx);
+        expect(response).toBeUndefined();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ApplicationError);
+      }
     });
   });
 
