@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import requester from './utilities/requester';
 
 import {
+  CustomerCreate,
   generateMockCustomers,
   totalCustomersByCity,
 } from '../shared/customer';
@@ -11,6 +12,10 @@ import {
 const prisma = new PrismaClient();
 
 describe('Test Customer Routes', () => {
+  const createCustomers = (customers: CustomerCreate[]) => (
+    prisma.customer.createMany({ data: customers })
+  );
+
   beforeAll(async () => {
     await prisma.customer.deleteMany();
   });
@@ -30,7 +35,7 @@ describe('Test Customer Routes', () => {
       const mockedCustomers = generateMockCustomers(100);
       const expectedBody = totalCustomersByCity(mockedCustomers);
 
-      await prisma.customer.createMany({ data: mockedCustomers });
+      await createCustomers(mockedCustomers);
 
       const response = await requester.get('/customer/total/by/city');
 
@@ -47,17 +52,13 @@ describe('Test Customer Routes', () => {
   });
 
   describe('Test GET /customer', () => {
-    afterEach(async () => {
-      await prisma.customer.deleteMany();
-    });
-
     it('Should return customers filtered by city', async () => {
       const mockedCustomers = generateMockCustomers(100);
       const expectedBody = mockedCustomers.filter(
         ({ city }) => city === mockedCustomers[0].city,
       );
 
-      await prisma.customer.createMany({ data: mockedCustomers });
+      await createCustomers(mockedCustomers);
 
       const response = await requester.get(`/customer/?city=${mockedCustomers[0].city}`);
 
@@ -74,9 +75,37 @@ describe('Test Customer Routes', () => {
       const response = await requester.get(`/customer/?first_name=${faker.name.firstName()}`);
 
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
-      expect(response.body).toMatchObject({
-        error: expect.any(String),
-      });
+      expect(response.body).toHaveProperty('error');
+    });
+  });
+
+  describe('Test GET /customer/:id', () => {
+    it('Should return customer by valid id', async () => {
+      const mockedCustomers = generateMockCustomers(100);
+
+      await createCustomers(mockedCustomers);
+      const dbCustomers = await prisma.customer.findMany();
+
+      const response = await requester.get(`/customer/${dbCustomers[50].id}`);
+
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toMatchObject(dbCustomers[50]);
+    });
+
+    it('Should return not found error in case of nonexistent id', async () => {
+      const response = await requester.get('/customer/0');
+
+      expect(response.status).toBe(StatusCodes.NOT_FOUND);
+      expect(response.body).toHaveProperty('error');
+    });
+
+    it('Should return bad request error in case of invalid id', async () => {
+      const mockWord = faker.random.word();
+
+      const response = await requester.get(`/customer/${mockWord}`);
+
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body).toHaveProperty('error');
     });
   });
 });
