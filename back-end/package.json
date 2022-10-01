@@ -12,7 +12,8 @@
     "start": "node .",
     "predev": "npm run prisma:migrate && npm run prisma:seed",
     "dev": "ts-node-dev src --watch src/app",
-    "prisma:migrate": "npx prisma db push && npx prisma db pull && npx prisma generate",
+    "prisma:migrate": "npx prisma db push && npx prisma generate",
+    "prisma:reset": "npx prisma migrate reset --force",
     "prisma:seed": "npx prisma db seed",
     "compose:up": "(docker-compose up -d --build)",
     "compose:down": "(docker-compose down --remove-orphans)",
@@ -20,7 +21,7 @@
     "compose:up:db": "(docker-compose up -d --build db --wait)",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "jest ./src/test/unit",
-    "pretest:integration": "npm run compose:down && dotenv -e .env.test npm run compose:up:db && dotenv -e .env.test npm run prisma:migrate",
+    "pretest:integration": "dotenv -e .env.test npm run compose:up:db && dotenv -e .env.test npm run prisma:reset",
     "test:integration": "dotenv -e .env.test jest ./src/test/integration"
   },
   "keywords": [],
