@@ -16,10 +16,6 @@ describe('Test Customer Routes', () => {
     prisma.customer.createMany({ data: customers })
   );
 
-  beforeAll(async () => {
-    await prisma.customer.deleteMany();
-  });
-
   beforeEach(async () => {
     await prisma.customer.deleteMany();
   });
@@ -27,10 +23,6 @@ describe('Test Customer Routes', () => {
   afterAll(() => requester.close());
 
   describe('Test GET /customer/total/by/city', () => {
-    afterEach(async () => {
-      await prisma.customer.deleteMany();
-    });
-
     it('Should return total customers by city when populated', async () => {
       const mockedCustomers = generateMockCustomers(100);
       const expectedBody = totalCustomersByCity(mockedCustomers);
