@@ -21,6 +21,12 @@ customerRouter.route('/:id')
     (req, res, next) => (
       CustomerController.readById(req, res, next, ctx)
     ),
+  )
+  .patch(
+    CustomerMiddleware.validateUpdateById,
+    (req, res, next) => (
+      CustomerController.updateById(req, res, next, ctx)
+    ),
   );
 
 customerRouter.get(

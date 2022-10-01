@@ -37,8 +37,24 @@ const readTotalCustomersByCity = async (ctx: IContext) => {
   return customersByCity;
 };
 
+const updateById = async (
+  id: number,
+  payload: Partial<Customer>,
+  ctx: IContext,
+) => {
+  const userExists = await ctx.prisma.customer.findUnique({ where: { id } });
+  if (!userExists) throw ERRORS.CUSTOMER.NOT_FOUND;
+
+  const response = await ctx.prisma.customer.update(
+    { where: { id }, data: payload },
+  );
+
+  return response;
+};
+
 export default {
   readAllByFilter,
   readById,
   readTotalCustomersByCity,
+  updateById,
 };

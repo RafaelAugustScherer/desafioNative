@@ -21,8 +21,17 @@ const readTotalCustomersByCity: IControllerRequestHandler = async (_req, res, _n
   res.status(StatusCodes.OK).json(response);
 };
 
+const updateById: IControllerRequestHandler = async (req, res, _next, ctx) => {
+  const { id } = req.params;
+
+  const response = await CustomerService.updateById(+id, req.body, ctx);
+
+  res.status(StatusCodes.OK).json(response);
+};
+
 export default {
   readAllByFilter,
   readById,
   readTotalCustomersByCity,
+  updateById,
 };
