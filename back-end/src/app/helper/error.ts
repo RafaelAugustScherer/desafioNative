@@ -16,6 +16,22 @@ const ERRORS = {
       'Customer not found',
     ),
   },
+  USER: {
+    INVALID_CREDENTIALS: new ApplicationError(
+      StatusCodes.FORBIDDEN,
+      'Invalid credentials',
+    ),
+  },
+  AUTH: {
+    TOKEN_NOT_FOUND: new ApplicationError(
+      StatusCodes.BAD_REQUEST,
+      'Token not found',
+    ),
+    INVALID_TOKEN: new ApplicationError(
+      StatusCodes.FORBIDDEN,
+      'Invalid token',
+    ),
+  },
 };
 
 export default ERRORS;
