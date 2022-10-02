@@ -13,7 +13,7 @@ const generateToken = (payload: object) => {
   return JWT.sign(payload, JWT_SECRET, { expiresIn: '24h' });
 };
 
-export {
+export default {
   encryptPassword,
   generateToken,
 };

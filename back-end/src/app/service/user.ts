@@ -1,14 +1,12 @@
-import { encryptPassword, generateToken } from '../helper/auth';
+import { User } from '@prisma/client';
+import AuthHelper from '../helper/auth';
 import ERRORS from '../helper/error';
 import IContext from '../interface/IContext';
 
-interface ILogin {
-  username: string,
-  password: string,
-}
+type UserLogin = Pick<User, 'username' | 'password'>;
 
-const login = async (payload: ILogin, ctx: IContext) => {
-  const encryptedPassword = encryptPassword(payload.password);
+const login = async (payload: UserLogin, ctx: IContext) => {
+  const encryptedPassword = AuthHelper.encryptPassword(payload.password);
 
   const response = await ctx.prisma.user.findFirst(
     { where: { ...payload, password: encryptedPassword } },
@@ -18,7 +16,7 @@ const login = async (payload: ILogin, ctx: IContext) => {
     throw ERRORS.USER.INVALID_CREDENTIALS;
   }
 
-  const token = generateToken(payload);
+  const token = AuthHelper.generateToken(payload);
 
   return { token };
 };
