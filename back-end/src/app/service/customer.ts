@@ -2,7 +2,7 @@ import { Customer } from '@prisma/client';
 import ERRORS from '../helper/error';
 import IContext from '../interface/IContext';
 
-interface customersByCity {
+interface ICustomersByCity {
   city: string,
   customers_total: number,
 }
@@ -24,7 +24,7 @@ const readById = async (id: number, ctx: IContext) => {
 const readTotalCustomersByCity = async (ctx: IContext) => {
   const response = await ctx.prisma.customer.findMany();
 
-  const customersByCity = response.reduce((acc: customersByCity[], cur: Customer) => {
+  const customersByCity = response.reduce((acc: ICustomersByCity[], cur: Customer) => {
     const cityIndexInResult = acc.findIndex(({ city }) => city === cur.city);
 
     if (cityIndexInResult !== -1) {
