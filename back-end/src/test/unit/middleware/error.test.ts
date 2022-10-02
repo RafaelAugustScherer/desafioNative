@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { StatusCodes } from 'http-status-codes';
 import errorMiddleware from '../../../app/middleware/error';
@@ -7,11 +8,12 @@ import {
 } from '../../shared/error';
 
 describe('Test Error Middleware', () => {
-  const req = getMockReq();
+  let req: Request;
   const { res, next, mockClear } = getMockRes();
 
   beforeEach(() => {
     mockClear();
+    req = getMockReq();
   });
 
   it('Handles JoiError and return formatted response', () => {

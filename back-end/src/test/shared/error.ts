@@ -1,7 +1,7 @@
 import { ObjectSchema } from 'joi';
 import { faker } from '@faker-js/faker';
 import CustomerSchema from '../../app/schema/customer';
-import ERRORS from '../../app/helper/error';
+import ERRORS, { ApplicationError } from '../../app/helper/error';
 
 const generateJoiError = (
   object?: object,
@@ -18,7 +18,9 @@ const generateJoiError = (
   return error;
 };
 
-const generateApplicationError = () => ERRORS.CUSTOMER.NOT_FOUND;
+const generateApplicationError = (error?: ApplicationError) => (
+  error || ERRORS.CUSTOMER.NOT_FOUND
+);
 
 export {
   generateJoiError,

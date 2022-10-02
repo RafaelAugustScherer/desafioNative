@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { faker } from '@faker-js/faker';
 import { ValidationError } from 'joi';
@@ -5,11 +6,12 @@ import CustomerMiddleware from '../../../app/middleware/customer';
 import { generateMockCustomer } from '../../shared/customer';
 
 describe('Test Customer Middleware', () => {
-  const req = getMockReq();
+  let req: Request;
   const { res, next, mockClear } = getMockRes();
 
   beforeEach(() => {
     mockClear();
+    req = getMockReq();
   });
 
   describe('Test validateFilter', () => {

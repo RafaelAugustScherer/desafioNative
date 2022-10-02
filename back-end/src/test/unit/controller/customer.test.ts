@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { StatusCodes } from 'http-status-codes';
 import { Customer } from '@prisma/client';
@@ -13,13 +14,14 @@ import {
 import { generateApplicationError } from '../../shared/error';
 
 describe('Test Customer Controller', () => {
-  const req = getMockReq();
+  let req: Request;
   const { res, next, mockClear } = getMockRes();
   let ctx: MockContext;
 
   beforeEach(() => {
-    ctx = createMockContext();
     mockClear();
+    req = getMockReq();
+    ctx = createMockContext();
   });
 
   describe('Test readAllByFilter', () => {
