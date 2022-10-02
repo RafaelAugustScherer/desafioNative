@@ -3,9 +3,12 @@ import prisma from '../helper/prisma';
 
 import CustomerController from '../controller/customer';
 import CustomerMiddleware from '../middleware/customer';
+import AuthMiddleware from '../middleware/auth';
 
 const customerRouter = Router();
 const ctx = { prisma };
+
+customerRouter.use(AuthMiddleware.validateToken);
 
 customerRouter.route('/')
   .get(

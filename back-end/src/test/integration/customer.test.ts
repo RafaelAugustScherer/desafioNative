@@ -1,8 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 import { Customer, PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import JWT from 'jsonwebtoken';
 import requester from './utilities/requester';
 
+import { generateMockUserLogin } from '../shared/user';
 import {
   CustomerCreate,
   generateMockCustomers,
@@ -12,12 +14,24 @@ import {
 const prisma = new PrismaClient();
 
 describe('Test Customer Routes', () => {
+  let token: string;
+
   const createCustomers = (customers: CustomerCreate[]) => (
     prisma.customer.createMany({ data: customers })
   );
 
+  const generateToken = () => {
+    const user = generateMockUserLogin();
+    const { JWT_SECRET } = process.env;
+
+    if (!JWT_SECRET) throw new Error('Please define JWT_SECRET Environment variable');
+
+    return JWT.sign(user, JWT_SECRET);
+  };
+
   beforeEach(async () => {
     await prisma.customer.deleteMany();
+    token = generateToken();
   });
 
   afterAll(() => requester.close());
@@ -29,14 +43,18 @@ describe('Test Customer Routes', () => {
 
       await createCustomers(mockedCustomers);
 
-      const response = await requester.get('/customer/total/by/city');
+      const response = await requester
+        .get('/customer/total/by/city')
+        .set('Authorization', token);
 
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toEqual(expectedBody);
     });
 
     it('Should return empty array when not populated', async () => {
-      const response = await requester.get('/customer/total/by/city');
+      const response = await requester
+        .get('/customer/total/by/city')
+        .set('Authorization', token);
 
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toEqual([]);
@@ -52,7 +70,9 @@ describe('Test Customer Routes', () => {
 
       await createCustomers(mockedCustomers);
 
-      const response = await requester.get(`/customer/?city=${mockedCustomers[0].city}`);
+      const response = await requester
+        .get(`/customer/?city=${mockedCustomers[0].city}`)
+        .set('Authorization', token);
 
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toBeInstanceOf(Array);
@@ -64,7 +84,9 @@ describe('Test Customer Routes', () => {
     });
 
     it('Should return error when filter is not valid', async () => {
-      const response = await requester.get(`/customer/?first_name=${faker.name.firstName()}`);
+      const response = await requester
+        .get(`/customer/?first_name=${faker.name.firstName()}`)
+        .set('Authorization', token);
 
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
       expect(response.body).toHaveProperty('error');
@@ -78,14 +100,18 @@ describe('Test Customer Routes', () => {
       await createCustomers(mockedCustomers);
       const dbCustomers = await prisma.customer.findMany();
 
-      const response = await requester.get(`/customer/${dbCustomers[50].id}`);
+      const response = await requester
+        .get(`/customer/${dbCustomers[50].id}`)
+        .set('Authorization', token);
 
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toMatchObject(dbCustomers[50]);
     });
 
     it('Should return not found error in case of nonexistent id', async () => {
-      const response = await requester.get('/customer/0');
+      const response = await requester
+        .get('/customer/0')
+        .set('Authorization', token);
 
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
       expect(response.body).toHaveProperty('error');
@@ -94,7 +120,9 @@ describe('Test Customer Routes', () => {
     it('Should return bad request error in case of invalid id', async () => {
       const mockWord = faker.random.word();
 
-      const response = await requester.get(`/customer/${mockWord}`);
+      const response = await requester
+        .get(`/customer/${mockWord}`)
+        .set('Authorization', token);
 
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
       expect(response.body).toHaveProperty('error');
@@ -114,6 +142,7 @@ describe('Test Customer Routes', () => {
 
       const response = await requester
         .patch(`/customer/${dbCustomers[50].id}`)
+        .set('Authorization', token)
         .send(mockedPayload);
 
       expect(response.status).toBe(StatusCodes.OK);
@@ -131,6 +160,7 @@ describe('Test Customer Routes', () => {
     it('Should return not found error in case of nonexistent id', async () => {
       const response = await requester
         .patch('/customer/0')
+        .set('Authorization', token)
         .send(mockedPayload);
 
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
@@ -142,6 +172,7 @@ describe('Test Customer Routes', () => {
 
       const response = await requester
         .patch(`/customer/${mockWord}`)
+        .set('Authorization', token)
         .send(mockedPayload);
 
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
@@ -154,6 +185,7 @@ describe('Test Customer Routes', () => {
 
       const response = await requester
         .patch(`/customer/${dbCustomers[50].id}`)
+        .set('Authorization', token)
         .send({ id: mockId });
 
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
