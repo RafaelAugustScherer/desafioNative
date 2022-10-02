@@ -17,3 +17,10 @@ model Customer {
   city       String @db.VarChar(50)
   title      String @db.VarChar(50)
 }
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @db.VarChar(50)
+  password String @db.VarChar(50)
+  role     String @db.VarChar(20)
+}
