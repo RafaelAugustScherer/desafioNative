@@ -8,11 +8,15 @@ const generateMockUserLogin = (): UserLogin => ({
   password: faker.internet.password(),
 });
 
-const generateMockUser = (): User => ({
-  id: faker.datatype.number(),
-  ...generateMockUserLogin(),
-  role: faker.helpers.arrayElement(['administrator', 'user']),
-});
+const generateMockUser = (userLogin?: UserLogin): User => {
+  const userNameAndPassword = userLogin || generateMockUserLogin();
+
+  return {
+    id: faker.datatype.number(),
+    ...userNameAndPassword,
+    role: faker.helpers.arrayElement(['administrator', 'user']),
+  };
+};
 
 export {
   generateMockUser,
