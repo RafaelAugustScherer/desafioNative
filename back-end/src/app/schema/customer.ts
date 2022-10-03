@@ -2,7 +2,9 @@ import Joi from 'joi';
 
 const filter = Joi.object({
   city: Joi.string(),
-}).strict();
+  limit: Joi.number(),
+  offset: Joi.number(),
+});
 
 const readById = Joi.object({
   id: Joi.number(),
@@ -16,7 +18,7 @@ const update = Joi.object({
   company: Joi.string().max(50),
   city: Joi.string().max(50),
   title: Joi.string().max(50),
-}).strict();
+});
 
 export default {
   filter,

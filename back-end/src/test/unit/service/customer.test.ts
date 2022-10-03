@@ -35,6 +35,23 @@ describe('Test Customer Service', () => {
       const response = await CustomerService.readAllByFilter({ city: mockCity }, ctx);
       expect(response).toEqual([]);
     });
+
+    it('Should return paginated customers', async () => {
+      const mockedCustomers = generateMockCustomers(100, { withId: true }) as Customer[];
+      const mockedCustomersPage = mockedCustomers.slice(20, 40);
+      const offset = '20';
+      const limit = '20';
+
+      ctx.prisma.customer.findMany.mockResolvedValue(mockedCustomersPage);
+
+      const response = await CustomerService.readAllByFilter({ limit, offset }, ctx);
+      expect(response).toEqual(mockedCustomersPage);
+      expect(ctx.prisma.customer.findMany).toHaveBeenCalledWith({
+        where: {},
+        skip: 20,
+        take: 20,
+      });
+    });
   });
 
   describe('Test readById', () => {

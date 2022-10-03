@@ -40,6 +40,16 @@ describe('Test Customer Middleware', () => {
 
       await Promise.all(testPromises);
     });
+
+    it('Should accept pagination (limit, offset) filters', async () => {
+      const mockLimit = faker.random.numeric();
+      const mockOffset = faker.random.numeric();
+
+      req.query = { limit: mockLimit, offset: mockOffset };
+
+      await CustomerMiddleware.validateFilter(req, res, next);
+      expect(next).toHaveBeenCalled();
+    });
   });
 
   describe('Test validateReadById', () => {

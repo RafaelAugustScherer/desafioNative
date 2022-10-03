@@ -83,6 +83,21 @@ describe('Test Customer Routes', () => {
       await Promise.all(expectPromises);
     });
 
+    it('Should return paginated customers when limit and offset are used', async () => {
+      const mockedCustomers = generateMockCustomers(100);
+      await createCustomers(mockedCustomers);
+
+      const dbCustomers = await prisma.customer.findMany();
+      const expectedResult = dbCustomers.slice(20, 40);
+
+      const response = await requester
+        .get('/customer/?limit=20&offset=20')
+        .set('Authorization', token);
+
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toEqual(expectedResult);
+    });
+
     it('Should return error when filter is not valid', async () => {
       const response = await requester
         .get(`/customer/?first_name=${faker.name.firstName()}`)

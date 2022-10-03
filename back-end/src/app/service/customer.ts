@@ -7,9 +7,19 @@ interface ICustomersByCity {
   customers_total: number,
 }
 
-const readAllByFilter = (filter: Partial<Customer>, ctx: IContext) => (
-  ctx.prisma.customer.findMany({ where: filter })
-);
+interface IReadAllByFilterPayload extends Partial<Customer> {
+  limit?: string,
+  offset?: string,
+}
+
+const readAllByFilter = (payload: IReadAllByFilterPayload, ctx: IContext) => {
+  const { limit = 0, offset = 0, ...filter } = payload;
+  return ctx.prisma.customer.findMany({
+    where: filter,
+    skip: +offset,
+    take: +limit,
+  });
+};
 
 const readById = async (id: number, ctx: IContext) => {
   const response = await ctx.prisma.customer.findUnique({ where: { id } });
