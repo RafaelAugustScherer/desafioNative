@@ -10,19 +10,40 @@ const CustomerProvider = ({ children }) => {
   const { REACT_APP_SERVER } = process.env;
   const [cookies] = useCookies(['desafioNative-token']);
   const [customers, setCustomers] = useState([]);
+  const [pageCustomers, setPageCustomers] = useState([]);
+  const [states, setStates] = useState([]);
   const navigate = useNavigate();
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = async (limit, offset) => {
+    const url = `${REACT_APP_SERVER}/customer/?` +
+    `${limit ? `limit=${limit}` : ''}` +
+    `${offset ? `offset=${offset}` : ''}`;
+
     const response = await axios.get(
-      `${REACT_APP_SERVER}/customer`,
+      url,
       { headers: { 'Authorization': cookies['desafioNative-token'] } },
     );
 
-    setCustomers(response.data);
+    if (limit || offset) {
+      setPageCustomers(response.data);
+    } else {
+      setCustomers(response.data);
+      setPageCustomers(response.data.slice(0, 20));
+    }
+  };
+
+  const filterStates = () => {
+    const states = customers.map(({ city }) => (
+      city.split(', ')[1]
+    ));
+
+    setStates(Array.from(new Set(states)));
   };
 
   const value = {
-    customers,
+    pageCustomers,
+    customersLength: customers.length,
+    states,
   };
 
   useEffect(() => {
@@ -31,6 +52,10 @@ const CustomerProvider = ({ children }) => {
     }
     fetchCustomers();
   }, []);
+
+  useEffect(() => {
+    customers.length && filterStates();
+  }, [customers]);
 
   return (
     <CustomerContext.Provider value={value}>
