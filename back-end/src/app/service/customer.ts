@@ -13,11 +13,11 @@ interface IReadAllByFilterPayload extends Partial<Customer> {
 }
 
 const readAllByFilter = (payload: IReadAllByFilterPayload, ctx: IContext) => {
-  const { limit = 0, offset = 0, ...filter } = payload;
+  const { limit, offset, ...filter } = payload;
   return ctx.prisma.customer.findMany({
     where: filter,
-    skip: +offset,
-    take: +limit,
+    skip: offset ? +offset : undefined,
+    take: limit ? +limit : undefined,
   });
 };
 
