@@ -15,7 +15,7 @@ const CityFilter = ({ arrayToFilter, setToArray }) => {
 
   useEffect(() => {
     setToArray(arrayToFilter.filter(
-      (info) => info.city.includes(city),
+      (info) => info.city.toLowerCase().includes(city.toLowerCase()),
     ));
   }, [arrayToFilter, city]);
 
