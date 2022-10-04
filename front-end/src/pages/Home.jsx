@@ -44,8 +44,7 @@ const Home = () => {
                 item
                 xs={12}
                 sm={6}
-                md={4}
-                lg={3}
+                md="auto"
               >
                 <CityCard
                   info={{ id: cityList.indexOf(info) + 1, ...info }}

@@ -6,7 +6,7 @@ const CityCard = ({ info, color }) => {
 
   return (
     <Card sx={{
-      width: '275 px',
+      width: '250px',
       height: '200px',
       backgroundColor: color,
     }}>
@@ -22,7 +22,7 @@ const CityCard = ({ info, color }) => {
           <Typography variant="h5">
             {info.city}
           </Typography>
-          <Typography color="text.secondary">
+          <Typography color="text.secondary" >
             Total de Clientes: {info.customers_total}
           </Typography>
         </CardContent>
