@@ -27,22 +27,24 @@ function App() {
               path="login"
               element={<Login />}
             />
-            <Route
-              path="city/:cityName"
-              element={
-                <CustomerProvider>
-                  <CustomersByCity />
-                </CustomerProvider>
-              }
-            />
-            <Route
-              path="customer/:customerId"
-              element={
-                <CustomerProvider>
-                  <Customer />
-                </CustomerProvider>
-              }
-            />
+            <Route path="city/:cityName">
+              <Route
+                index
+                element={
+                  <CustomerProvider>
+                    <CustomersByCity />
+                  </CustomerProvider>
+                }
+              />
+              <Route
+                path="customer/:customerId"
+                element={
+                  <CustomerProvider>
+                    <Customer />
+                  </CustomerProvider>
+                }
+              />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

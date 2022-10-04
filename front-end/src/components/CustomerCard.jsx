@@ -7,7 +7,7 @@ const CustomerCard = ({ customer, color }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/customer/${customer.id}`);
+    navigate(`./customer/${customer.id}`);
   };
 
   return (

@@ -42,7 +42,7 @@ const Home = () => {
         arrayToFilter={cityList}
         setToArray={setCityListByName}
       />
-      <Box m={5} display="flex" justifyContent="center">
+      <Box my={5} display="flex" justifyContent="center">
         <Grid container spacing={4} justifyContent="center">
           {
             getPaginatedCityList().map((info, idx) => (

@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Box,
   Fab,
   Tooltip,
   Typography,
-  IconButton,
 } from '@mui/material';
-import { Check, Edit, ArrowBackIosNew } from '@mui/icons-material';
+import { Check, Edit } from '@mui/icons-material';
 import { CustomerContext } from '../providers/Customer';
 import ErrorAlert from '../components/ErrorAlert';
 import CustomerInfo from '../components/CustomerInfo';
 import CustomerForm from '../components/CustomerForm';
+import CustomBreadcrumbs from '../components/CustomBreadcrumbs';
 
 const Customer = () => {
   const { fetchCustomerById, updateCustomerById } = useContext(CustomerContext);
@@ -20,7 +20,6 @@ const Customer = () => {
   const [ loading, setLoading ] = useState(false);
   const [ editEnabled, setEditEnabled ] = useState(false);
   const { customerId } = useParams();
-  const navigate = useNavigate();
 
   const fetchCustomer = async () => {
     setLoading(true);
@@ -56,12 +55,9 @@ const Customer = () => {
       onSubmit={handleEdit}
       sx={{ my: 3, mx: 5, position: 'relative' }}
     >
-      <IconButton
-        aria-label="Voltar"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowBackIosNew />
-      </IconButton>
+      <CustomBreadcrumbs
+        customerName={ formData && `${formData.first_name} ${formData.last_name}`}
+      />
       <Typography variant="h4" component="h2" textAlign="center">
         Informações do Cliente
       </Typography>
