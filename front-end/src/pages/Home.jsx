@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import { Box, Grid, Pagination, Typography } from '@mui/material';
+// import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { CustomerContext } from '../providers/Customer';
 import CityFilter from '../partials/CityFilter';
 import CityCard from '../components/CityCard';
@@ -24,27 +25,30 @@ const Home = () => {
   };
 
   return (
-    <Box sx={{ my: 3, mx: 5 }}>
+    <Box sx={{
+      my: 3,
+      mx: 5,
+      display: 'flex',
+      flexFlow: 'column wrap',
+      alignItems: 'center',
+    }}>
       <Typography variant="h3" component="h1" textAlign="center">
         Home
+      </Typography>
+      <Typography variant="h4" component="h2" textAlign="center">
+        Lista de Cidades
       </Typography>
       <CityFilter
         arrayToFilter={cityList}
         setToArray={setCityListByName}
       />
-      <Typography variant="h4" component="h2" textAlign="center">
-        Lista de Cidades
-      </Typography>
-      <Box m={5}>
-        <Grid container spacing={4}>
+      <Box m={5} display="flex" justifyContent="center">
+        <Grid container spacing={4} justifyContent="center">
           {
             getPaginatedCityList().map((info, idx) => (
               <Grid
                 key={`customer-card-${idx + 1}`}
                 item
-                xs={12}
-                sm={6}
-                md="auto"
               >
                 <CityCard
                   info={{ id: cityList.indexOf(info) + 1, ...info }}

@@ -1,8 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
 
 const CityCard = ({ info, color }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/city/${info.city}`);
+  };
 
   return (
     <Card sx={{
@@ -10,7 +16,7 @@ const CityCard = ({ info, color }) => {
       height: '200px',
       backgroundColor: color,
     }}>
-      <CardActionArea sx={{ pb: 3 }}>
+      <CardActionArea onClick={handleClick} sx={{ pb: 3 }}>
         <CardContent sx={{
           '& > *': {
             py: 1,

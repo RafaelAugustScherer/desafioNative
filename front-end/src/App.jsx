@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import AppThemeProvider from './providers/Theme';
 import CustomerProvider from './providers/Customer';
+import CustomersByCity from './pages/CustomersByCity';
 
 function App() {
 
@@ -21,7 +22,18 @@ function App() {
                 </CustomerProvider>
               }
             />
-            <Route path="login" element={<Login />} />
+            <Route
+              path="login"
+              element={<Login />}
+            />
+            <Route
+              path="city/:cityName"
+              element={
+                <CustomerProvider>
+                  <CustomersByCity />
+                </CustomerProvider>
+              }
+            />
           </Route>
         </Routes>
       </BrowserRouter>

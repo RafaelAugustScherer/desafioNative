@@ -29,7 +29,7 @@ const CustomerProvider = ({ children }) => {
   const fetchCustomersByCity = async () => {
     console.log(location);
     const url = `${REACT_APP_SERVER}/customer/` +
-      `?city=${params.cityName}&limit=20&offset=${(currentPage - 1) * 20}`;
+      `?city=${params.cityName}&limit=10&offset=${(currentPage - 1) * 10}`;
 
     const response = await axios.get(
       url,
@@ -51,20 +51,25 @@ const CustomerProvider = ({ children }) => {
     cityList,
     customers,
     states,
+    currentPage,
     setCurrentPage,
   };
 
   useEffect(() => {
-    if (!cookies['desafioNative-token']) {
+    if (!cookies['desafioNative-token'] && Location.pathname !== '/login') {
       return navigate('/login');
     }
 
-    if (location.pathname === '/') {
-      fetchTotalCustomersByCity();
-    } else if (location.pathname.includes('city')) {
+    fetchTotalCustomersByCity();
+
+    if (location.pathname.includes('city')) {
       fetchCustomersByCity();
     }
   }, [ location ]);
+
+  useEffect(() => {
+    fetchCustomersByCity();
+  }, [currentPage]);
 
   useEffect(() => {
     cityList.length && filterStates();

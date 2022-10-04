@@ -14,6 +14,9 @@ const AppThemeProvider = ({ children }) => {
       h4: {
         margin: '20px 0',
       },
+      h5: {
+        fontWeight: 600,
+      },
     },
     palette: {
       primary: {
