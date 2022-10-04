@@ -11,7 +11,7 @@ const CustomerProvider = ({ children }) => {
   const [ cookies ] = useCookies([ 'desafioNative-token' ]);
   const [ customers, setCustomers ] = useState([]);
   const [ currentPage, setCurrentPage ] = useState(1);
-  const [ customersByCity, setCustomersByCity ] = useState([]);
+  const [ cityList, setCityList ] = useState([]);
   const [ states, setStates ] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,7 +23,7 @@ const CustomerProvider = ({ children }) => {
       { headers: { 'Authorization': cookies[ 'desafioNative-token' ] } },
     );
 
-    setCustomersByCity(response.data);
+    setCityList(response.data);
   };
 
   const fetchCustomersByCity = async () => {
@@ -40,7 +40,7 @@ const CustomerProvider = ({ children }) => {
   };
 
   const filterStates = () => {
-    const states = customersByCity.map(({ city }) => (
+    const states = cityList.map(({ city }) => (
       city.split(', ')[ 1 ]
     ));
 
@@ -48,7 +48,7 @@ const CustomerProvider = ({ children }) => {
   };
 
   const value = {
-    customersByCity,
+    cityList,
     customers,
     states,
     setCurrentPage,
@@ -67,7 +67,7 @@ const CustomerProvider = ({ children }) => {
   }, [ location ]);
 
   useEffect(() => {
-    customersByCity.length && filterStates();
+    cityList.length && filterStates();
   }, [ customers ]);
 
   return (

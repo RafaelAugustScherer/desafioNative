@@ -7,10 +7,21 @@ import CityCard from '../components/CityCard';
 
 const Home = () => {
   const {
-    customersByCity,
+    cityList,
   } = useContext(CustomerContext);
-  const [ filteredByCity, setFilteredByCity ] = useState([]);
+  const [ cityListByName, setCityListByName ] = useState([]);
+  const [page, setPage] = useState(1);
   const { palette } = useTheme();
+
+  const getPaginatedCityList = () => {
+    const offset = (page - 1) * 20;
+    return cityListByName.slice(offset, offset + 20);
+  };
+
+  const handlePageChange = (_e, value) => {
+    setPage(value);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <Box sx={{ my: 3, mx: 5 }}>
@@ -18,8 +29,8 @@ const Home = () => {
         Home
       </Typography>
       <CityFilter
-        arrayToFilter={customersByCity}
-        setToArray={setFilteredByCity}
+        arrayToFilter={cityList}
+        setToArray={setCityListByName}
       />
       <Typography variant="h4" component="h2" textAlign="center">
         Lista de Cidades
@@ -27,7 +38,7 @@ const Home = () => {
       <Box m={5}>
         <Grid container spacing={4}>
           {
-            filteredByCity.map((info, idx) => (
+            getPaginatedCityList().map((info, idx) => (
               <Grid
                 key={`customer-card-${idx + 1}`}
                 item
@@ -37,7 +48,7 @@ const Home = () => {
                 lg={3}
               >
                 <CityCard
-                  info={{ id: idx + 1, ...info }}
+                  info={{ id: cityList.indexOf(info) + 1, ...info }}
                   color={palette.secondary.main}
                 />
               </Grid>
@@ -46,10 +57,12 @@ const Home = () => {
         </Grid>
       </Box>
       <Pagination
-        count={filteredByCity.length !== 0
-          ? Math.ceil(filteredByCity.length / 20)
+        count={cityListByName.length !== 0
+          ? Math.ceil(cityListByName.length / 20)
           : 1
         }
+        page={page}
+        onChange={handlePageChange}
       />
     </Box>
   );
