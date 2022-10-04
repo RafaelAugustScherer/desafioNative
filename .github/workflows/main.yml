@@ -46,4 +46,4 @@ jobs:
           appdir: "back-end"
     env:
       HD_JWT_SECRET: ${{secrets.JWT_SECRET}}
-      HD_DB_CONNECTION_URI: ${{env.DB_CONNECTION_URI}}
+      HD_DB_CONNECTION_URI: $DB_CONNECTION_URI
