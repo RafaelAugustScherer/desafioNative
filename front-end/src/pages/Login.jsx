@@ -40,7 +40,6 @@ const Login = () => {
       setCookies('desafioNative-token', response.data.token);
       return navigate('/');
     } catch (e) {
-      console.log(e);
       const { error } = e.response.data;
       setLoginError(error);
     }

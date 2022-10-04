@@ -1,15 +1,21 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
 
 const CustomerCard = ({ customer, color }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/customer/${customer.id}`);
+  };
 
   return (
     <Card sx={{
       width: '275 px',
       backgroundColor: color,
     }}>
-      <CardActionArea sx={{ pb: 3 }}>
+      <CardActionArea onClick={handleClick} sx={{ pb: 3 }}>
         <CardContent sx={{
           '& > *': {
             py: 1,

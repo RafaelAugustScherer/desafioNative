@@ -24,7 +24,6 @@ const CustomersByCity = () => {
   };
 
   const getTotalCustomersInCity = () => {
-    console.log(cityList, cityName);
     const cityInfo = cityList.find(({ city }) => city === cityName);
 
     return cityInfo ? cityInfo.customers_total : 0;

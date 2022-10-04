@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import AppThemeProvider from './providers/Theme';
 import CustomerProvider from './providers/Customer';
 import CustomersByCity from './pages/CustomersByCity';
+import Customer from './pages/Customer';
 
 function App() {
 
@@ -31,6 +32,14 @@ function App() {
               element={
                 <CustomerProvider>
                   <CustomersByCity />
+                </CustomerProvider>
+              }
+            />
+            <Route
+              path="customer/:customerId"
+              element={
+                <CustomerProvider>
+                  <Customer />
                 </CustomerProvider>
               }
             />
