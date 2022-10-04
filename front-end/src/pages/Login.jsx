@@ -37,7 +37,11 @@ const Login = () => {
         `${REACT_APP_SERVER}/user/login`,
         formData,
       );
-      setCookies('desafioNative-token', response.data.token);
+      setCookies(
+        'desafioNative-token',
+        response.data.token,
+        { maxAge: 60 * 60 * 24 },
+      );
       return navigate('/');
     } catch (e) {
       const { error } = e.response.data;
