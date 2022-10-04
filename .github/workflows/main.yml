@@ -22,7 +22,7 @@ jobs:
       - name: Unit Tests
         run: npm run test:unit
       - name: Integration Tests
-        run: npm run test:integration
+        run: npm run test:integration:deploy
     env:
       JWT_SECRET: ${{secrets.JWT_SECRET}}
 

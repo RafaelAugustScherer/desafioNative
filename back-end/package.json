@@ -24,7 +24,8 @@
     "pretest:integration": "dotenv -e .env.test npm run compose:up:db && dotenv -e .env.test npm run prisma:reset",
     "test:integration": "dotenv -e .env.test jest ./src/test/integration",
     "pretest:integration:docker": "dotenv -e .env.test npm run prisma:reset",
-    "test:integration:docker": "npm run test:integration"
+    "test:integration:docker": "npm run test:integration",
+    "test:integration:deploy": "npm run compose:up:db && npm run prisma:reset && jest ./src/test/integration"
   },
   "keywords": [],
   "author": "",
