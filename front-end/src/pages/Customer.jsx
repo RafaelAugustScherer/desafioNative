@@ -1,35 +1,48 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Fab, Tooltip, Typography } from '@mui/material';
-import { Check, Edit } from '@mui/icons-material';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Box,
+  Fab,
+  Tooltip,
+  Typography,
+  IconButton,
+} from '@mui/material';
+import { Check, Edit, ArrowBackIosNew } from '@mui/icons-material';
 import { CustomerContext } from '../providers/Customer';
 import ErrorAlert from '../components/ErrorAlert';
 import CustomerInfo from '../components/CustomerInfo';
 import CustomerForm from '../components/CustomerForm';
 
 const Customer = () => {
-  const { fetchCustomerById } = useContext(CustomerContext);
+  const { fetchCustomerById, updateCustomerById } = useContext(CustomerContext);
   const [ formData, setFormData ] = useState();
   const [ apiError, setApiError ] = useState();
   const [ loading, setLoading ] = useState(false);
   const [ editEnabled, setEditEnabled ] = useState(false);
   const { customerId } = useParams();
+  const navigate = useNavigate();
 
   const fetchCustomer = async () => {
     setLoading(true);
 
     const response = await fetchCustomerById(customerId);
-    if (response.error) {
-      setApiError(response.error);
-    } else {
-      setFormData(response.data);
-    }
+    response.error ? setApiError(response.error) : setFormData(response);
 
     setLoading(false);
   };
 
-  const handleEdit = (e) => {
+  const handleEdit = async (e) => {
     e.preventDefault();
+
+    if (editEnabled) {
+      const { id, ...propsToEdit } = formData;
+      const response = await updateCustomerById(id, propsToEdit);
+      if (response.error) {
+        setApiError(response.error);
+        return;
+      }
+    }
+
     setEditEnabled(!editEnabled);
   };
 
@@ -43,7 +56,13 @@ const Customer = () => {
       onSubmit={handleEdit}
       sx={{ my: 3, mx: 5, position: 'relative' }}
     >
-      <Typography variant="h3" component="h1" textAlign="center">
+      <IconButton
+        aria-label="Voltar"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowBackIosNew />
+      </IconButton>
+      <Typography variant="h4" component="h2" textAlign="center">
         Informações do Cliente
       </Typography>
       {
@@ -87,7 +106,7 @@ const Customer = () => {
           aria-label="Editar"
           color="success"
           type="submit"
-          variant={editEnabled ? 'extended': 'circular'}
+          variant={editEnabled ? 'extended' : 'circular'}
         >
           {
             editEnabled

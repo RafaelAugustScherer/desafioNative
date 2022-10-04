@@ -47,7 +47,23 @@ const CustomerProvider = ({ children }) => {
         { headers: { 'Authorization': cookies['desafioNative-token'] } },
       );
 
-      return response;
+      return response.data;
+    } catch (e) {
+      return e.response.data;
+    }
+  };
+
+  const updateCustomerById = async (id, payload) => {
+    const url = `${REACT_APP_SERVER}/customer/${id}`;
+
+    try {
+      const response = await axios.patch(
+        url,
+        payload,
+        { headers: { 'Authorization': cookies['desafioNative-token'] } },
+      );
+
+      return response.data;
     } catch (e) {
       return e.response.data;
     }
@@ -68,6 +84,7 @@ const CustomerProvider = ({ children }) => {
     currentPage,
     setCurrentPage,
     fetchCustomerById,
+    updateCustomerById,
   };
 
   useEffect(() => {
