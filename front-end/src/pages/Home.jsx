@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import { Box, Grid, Pagination, Typography } from '@mui/material';
 import { CustomerContext } from '../providers/Customer';
-import CustomerCard from '../components/CustomerCard';
-import CustomerFilter from '../partials/CustomerFilter';
+import CityFilter from '../partials/CityFilter';
+import CityCard from '../components/CityCard';
 
 const Home = () => {
   const {
-    pageCustomers,
-    customersLength,
+    customersByCity,
   } = useContext(CustomerContext);
+  const [ filteredByCity, setFilteredByCity ] = useState([]);
   const { palette } = useTheme();
 
   return (
@@ -17,32 +17,40 @@ const Home = () => {
       <Typography variant="h3" component="h1" textAlign="center">
         Home
       </Typography>
-      <CustomerFilter />
-        <Typography variant="h4" component="h2" textAlign="center">
-        Lista de Clientes
+      <CityFilter
+        arrayToFilter={customersByCity}
+        setToArray={setFilteredByCity}
+      />
+      <Typography variant="h4" component="h2" textAlign="center">
+        Lista de Cidades
       </Typography>
-        <Box m={5}>
+      <Box m={5}>
         <Grid container spacing={4}>
           {
-            pageCustomers.map((customer) => (
+            filteredByCity.map((info, idx) => (
               <Grid
-                key={`customer-card-${customer.id}`}
+                key={`customer-card-${idx + 1}`}
                 item
                 xs={12}
                 sm={6}
                 md={4}
                 lg={3}
               >
-                <CustomerCard
-                  customer={customer}
+                <CityCard
+                  info={{ id: idx + 1, ...info }}
                   color={palette.secondary.main}
                 />
               </Grid>
             ))
           }
         </Grid>
-        </Box>
-        <Pagination count={customersLength / 20} />
+      </Box>
+      <Pagination
+        count={filteredByCity.length !== 0
+          ? Math.ceil(filteredByCity.length / 20)
+          : 1
+        }
+      />
     </Box>
   );
 };

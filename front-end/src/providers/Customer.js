@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -8,58 +8,71 @@ export const CustomerContext = createContext();
 
 const CustomerProvider = ({ children }) => {
   const { REACT_APP_SERVER } = process.env;
-  const [cookies] = useCookies(['desafioNative-token']);
-  const [customers, setCustomers] = useState([]);
-  const [pageCustomers, setPageCustomers] = useState([]);
-  const [states, setStates] = useState([]);
+  const [ cookies ] = useCookies([ 'desafioNative-token' ]);
+  const [ customers, setCustomers ] = useState([]);
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const [ customersByCity, setCustomersByCity ] = useState([]);
+  const [ states, setStates ] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
 
-  const fetchCustomers = async (limit, offset) => {
-    const url = `${REACT_APP_SERVER}/customer/?` +
-    `${limit ? `limit=${limit}` : ''}` +
-    `${offset ? `offset=${offset}` : ''}`;
+  const fetchTotalCustomersByCity = async () => {
+    const response = await axios.get(
+      `${REACT_APP_SERVER}/customer/total/by/city`,
+      { headers: { 'Authorization': cookies[ 'desafioNative-token' ] } },
+    );
+
+    setCustomersByCity(response.data);
+  };
+
+  const fetchCustomersByCity = async () => {
+    console.log(location);
+    const url = `${REACT_APP_SERVER}/customer/` +
+      `?city=${params.cityName}&limit=20&offset=${(currentPage - 1) * 20}`;
 
     const response = await axios.get(
       url,
-      { headers: { 'Authorization': cookies['desafioNative-token'] } },
+      { headers: { 'Authorization': cookies[ 'desafioNative-token' ] } },
     );
 
-    if (limit || offset) {
-      setPageCustomers(response.data);
-    } else {
-      setCustomers(response.data);
-      setPageCustomers(response.data.slice(0, 20));
-    }
+    setCustomers(response.data);
   };
 
   const filterStates = () => {
-    const states = customers.map(({ city }) => (
-      city.split(', ')[1]
+    const states = customersByCity.map(({ city }) => (
+      city.split(', ')[ 1 ]
     ));
 
     setStates(Array.from(new Set(states)));
   };
 
   const value = {
-    pageCustomers,
-    customersLength: customers.length,
+    customersByCity,
+    customers,
     states,
+    setCurrentPage,
   };
 
   useEffect(() => {
     if (!cookies['desafioNative-token']) {
       return navigate('/login');
     }
-    fetchCustomers();
-  }, []);
+
+    if (location.pathname === '/') {
+      fetchTotalCustomersByCity();
+    } else if (location.pathname.includes('city')) {
+      fetchCustomersByCity();
+    }
+  }, [ location ]);
 
   useEffect(() => {
-    customers.length && filterStates();
-  }, [customers]);
+    customersByCity.length && filterStates();
+  }, [ customers ]);
 
   return (
     <CustomerContext.Provider value={value}>
-      { children }
+      {children}
     </CustomerContext.Provider>
   );
 };
