@@ -1,0 +1,49 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test_back:
+    runs-on: ubuntu-latest
+    environment: Test
+    defaults:
+      run:
+        working-directory: ./back-end
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm ci
+      - name: Unit Tests
+        run: npm run test:unit
+      - name: Integration Tests
+        run: npm run test:integration
+    env:
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+
+  deploy_back:
+    runs-on: ubuntu-latest
+    environment: Deploy
+    defaults:
+      run:
+        working-directory: ./back-end
+    needs: test_back
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build and Deploy API
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{env.HEROKU_API_KEY}}
+          heroku_app_name: "desafio-native-back"
+          heroku_email: "rafaelaugustscherer@gmail.com"
+          usedocker: true
+          stack: container
+          appdir: "back-end"
+    env:
+      HD_JWT_SECRET: ${{secrets.JWT_SECRET}}
+      HD_DB_CONNECTION_URI: ${{env.DB_CONNECTION_URI}}
