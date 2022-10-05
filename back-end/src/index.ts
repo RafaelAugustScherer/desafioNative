@@ -8,7 +8,7 @@ process.on('SIGTERM', () => {
   process.exit();
 });
 
-const PORT = process.env.APP_PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
 // eslint-disable-next-line no-console
 const server = App.listen(PORT, () => console.log(`App running at ${PORT}`));
