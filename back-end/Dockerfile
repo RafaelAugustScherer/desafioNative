@@ -9,4 +9,4 @@ RUN npm install
 COPY . .
 
 EXPOSE $APP_PORT
-ENTRYPOINT npm run prisma:migrate && npm run prisma:seed && npm start
+CMD npm run prisma:migrate && npm run prisma:seed && npm start
