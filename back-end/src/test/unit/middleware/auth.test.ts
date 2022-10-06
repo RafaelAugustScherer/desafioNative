@@ -20,7 +20,10 @@ describe('Test Authentication Middleware', () => {
     it('Should correctly validate token', async () => {
       req.headers.authorization = tokenMock;
 
-      jest.spyOn(JWT, 'verify').mockReturnValue();
+      jest.spyOn(JWT, 'decode').mockReturnValue({
+        username: faker.internet.userName(),
+        password: faker.internet.password(),
+      });
 
       await AuthMiddleware.validateToken(req, res, next);
       expect(next).toHaveBeenCalled();
