@@ -17,6 +17,7 @@
     "plugins": [
         "@typescript-eslint"
     ],
+    "ignorePatterns": ["build"],
     "rules": {
         "@typescript-eslint/naming-convention": "off",
         "quotes": [
