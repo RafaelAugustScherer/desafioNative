@@ -3,11 +3,12 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 
 export const CustomerContext = createContext();
 
 const CustomerProvider = ({ children }) => {
-  const { REACT_APP_SERVER } = process.env;
+  const { REACT_APP_SERVER, REACT_APP_WS_SERVER } = process.env;
   const [ cookies ] = useCookies([ 'desafioNative-token' ]);
   const [ customers, setCustomers ] = useState([]);
   const [ currentPage, setCurrentPage ] = useState(1);
@@ -16,6 +17,10 @@ const CustomerProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
+  const { sendMessage, lastMessage } = useWebSocket(
+    `${REACT_APP_WS_SERVER}/customer`,
+    { onOpen: () => sendMessage(cookies['desafioNative-token']) },
+  );
 
   const fetchTotalCustomersByCity = async () => {
     const response = await axios.get(
@@ -28,7 +33,7 @@ const CustomerProvider = ({ children }) => {
 
   const fetchCustomersByCity = async () => {
     const url = `${REACT_APP_SERVER}/customer/` +
-      `?city=${params.cityName}&limit=10&offset=${(currentPage - 1) * 10}`;
+      `?city=${params.cityName}`;
 
     const response = await axios.get(
       url,
@@ -38,24 +43,9 @@ const CustomerProvider = ({ children }) => {
     setCustomers(response.data);
   };
 
-  const fetchCustomerById = async (id) => {
-    const url = `${REACT_APP_SERVER}/customer/${id}`;
-
-    try {
-      const response = await axios.get(
-        url,
-        { headers: { 'Authorization': cookies['desafioNative-token'] } },
-      );
-
-      return response.data;
-    } catch (e) {
-      return e.response.data;
-    }
-  };
-
   const updateCustomerById = async (id, payload) => {
     const url = `${REACT_APP_SERVER}/customer/${id}`;
-
+    sendMessage(JSON.stringify({ id, ...payload }));
     try {
       const response = await axios.patch(
         url,
@@ -83,7 +73,6 @@ const CustomerProvider = ({ children }) => {
     states,
     currentPage,
     setCurrentPage,
-    fetchCustomerById,
     updateCustomerById,
   };
 
@@ -106,6 +95,23 @@ const CustomerProvider = ({ children }) => {
   useEffect(() => {
     cityList.length && filterStates();
   }, [ customers ]);
+
+  useEffect(() => {
+    console.log(lastMessage);
+    try {
+      const user = JSON.parse(lastMessage.data);
+      if (user && typeof user === 'object') {
+        setCustomers((curValue) => (
+          curValue.map((stateUser) => stateUser.id === user.id
+            ? user
+            : stateUser,
+          )
+        ));
+      }
+    } catch (e) {
+      return;
+    }
+  }, [lastMessage]);
 
   return (
     <CustomerContext.Provider value={value}>

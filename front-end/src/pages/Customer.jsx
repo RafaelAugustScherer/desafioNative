@@ -14,21 +14,12 @@ import CustomerForm from '../components/CustomerForm';
 import CustomBreadcrumbs from '../components/CustomBreadcrumbs';
 
 const Customer = () => {
-  const { fetchCustomerById, updateCustomerById } = useContext(CustomerContext);
+  const { customers, updateCustomerById } = useContext(CustomerContext);
   const [ formData, setFormData ] = useState();
   const [ apiError, setApiError ] = useState();
   const [ loading, setLoading ] = useState(false);
   const [ editEnabled, setEditEnabled ] = useState(false);
   const { customerId } = useParams();
-
-  const fetchCustomer = async () => {
-    setLoading(true);
-
-    const response = await fetchCustomerById(customerId);
-    response.error ? setApiError(response.error) : setFormData(response);
-
-    setLoading(false);
-  };
 
   const handleEdit = async (e) => {
     e.preventDefault();
@@ -45,9 +36,19 @@ const Customer = () => {
     setEditEnabled(!editEnabled);
   };
 
+  /*
   useEffect(() => {
     fetchCustomer();
   }, []);
+  */
+
+  useEffect(() => {
+    setLoading(true);
+    setFormData(
+      customers.find(({ id }) => id === +customerId),
+    );
+    setLoading(false);
+  }, [customers]);
 
   return (
     <Box
@@ -95,7 +96,7 @@ const Customer = () => {
         title="Editar Informações"
         sx={{
           position: 'absolute',
-          bottom: editEnabled ? -100 : 0,
+          bottom: -100,
           right: 0,
         }}>
         <Fab

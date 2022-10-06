@@ -27,6 +27,11 @@ const CustomersByCity = () => {
     return cityInfo ? cityInfo.customers_total : 0;
   };
 
+  const pageCustomers = () => {
+    const offset = (currentPage - 1) * 10;
+    return customers.slice(offset, offset + 10);
+  };
+
   return (
     <Box sx={{ my: 3, mx: 5 }}>
       <CustomBreadcrumbs />
@@ -36,7 +41,7 @@ const CustomersByCity = () => {
     <Box my={5}>
       <Grid container spacing={4}>
         {
-          customers.map((customer) => (
+          pageCustomers().map((customer) => (
             <Grid
               key={`customer-card-${customer.id}`}
               item
