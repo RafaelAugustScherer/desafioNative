@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box,
@@ -12,7 +12,8 @@ import CustomerCard from '../components/CustomerCard';
 import CustomBreadcrumbs from '../components/CustomBreadcrumbs';
 
 const CustomersByCity = () => {
-  const { cityList, customers, currentPage, setCurrentPage } = useContext(CustomerContext);
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const { cityList, customers } = useContext(CustomerContext);
   const { palette } = useTheme();
   const { cityName } = useParams();
 
