@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import { Box, Grid, Pagination, Typography } from '@mui/material';
 // import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
