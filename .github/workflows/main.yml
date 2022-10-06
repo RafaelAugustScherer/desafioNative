@@ -18,6 +18,8 @@ jobs:
           node-version: 16
       - name: Install dependencies
         run: npm ci
+      - name: Run ESLint
+        run: npx eslint .
       - name: Unit Tests
         run: npm run test:unit
       - name: Integration Tests
@@ -55,6 +57,8 @@ jobs:
     needs: deploy_back
     steps:
       - uses: actions/checkout@v3
+      - name: Run ESLint
+        run: npx eslint .
       - name: Build and Deploy Web App
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
