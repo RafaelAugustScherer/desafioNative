@@ -49,10 +49,11 @@ Antes de inicializar o projeto, é importante configurar algumas variáveis de a
   - Altere o arquivo `.env.example` com as variáveis de ambiente indicadas:
   ```
   REACT_APP_SERVER=http://localhost:3001 // URL de acesso à API (back-end)
+  REACT_APP_WS_SERVER=ws://localhost:3001 // URL de acesso ao WebSocket (mesmo da API)
   ```
   > Apague os comentários indicados `// ...` ao lado do valor da variável
   - Renomeie o arquivo para `.env`
- 
+
 ### Instalar dependências
 - Na pasta`./front-end` rode o comando `npm install`
 
@@ -109,10 +110,11 @@ Antes de inicializar o projeto, é importante configurar algumas variáveis de a
   - Altere o arquivo `.env.example` com as variáveis de ambiente indicadas:
   ```
   REACT_APP_SERVER=http://localhost:<PORT> // URL de acesso à API (back-end)
+  REACT_APP_WS_SERVER=ws://localhost:<PORT> // URL de acesso ao WebSocket (mesmo da API)
   ```
   > Apague os comentários indicados `// ...` ao lado do valor da variável
   - Renomeie o arquivo para `.env`
- 
+
 ### Instalar dependências
 - Nas pastas `./back-end` e `./front-end` rode o comando `npm install`
 

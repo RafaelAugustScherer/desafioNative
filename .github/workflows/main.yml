@@ -72,5 +72,7 @@ jobs:
           appdir: "front-end"
           docker_build_args: |
             REACT_APP_SERVER
+            REACT_APP_WS_SERVER
     env:
       REACT_APP_SERVER: ${{secrets.REACT_APP_SERVER}}
+      REACT_APP_WS_SERVER: ${{secrets.REACT_APP_WS_SERVER}}
