@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
