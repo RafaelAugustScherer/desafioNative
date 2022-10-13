@@ -1,5 +1,6 @@
 import md5 from 'md5';
-import JWT from 'jsonwebtoken';
+import JWT, { JwtPayload } from 'jsonwebtoken';
+import ERRORS from './error';
 
 const encryptPassword = (password: string) => md5(password);
 
@@ -13,7 +14,19 @@ const generateToken = (payload: object) => {
   return JWT.sign(payload, JWT_SECRET, { expiresIn: '24h' });
 };
 
+const validateToken = (token: string) => {
+  try {
+    const { username, password } = JWT.decode(token) as JwtPayload;
+    if (!username || !password) {
+      throw Error();
+    }
+  } catch (e) {
+    throw ERRORS.AUTH.INVALID_TOKEN;
+  }
+};
+
 export default {
   encryptPassword,
   generateToken,
+  validateToken,
 };

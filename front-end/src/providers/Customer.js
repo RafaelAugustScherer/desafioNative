@@ -3,7 +3,7 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
+import { io } from 'socket.io-client';
 
 export const CustomerContext = createContext();
 
@@ -15,10 +15,11 @@ const CustomerProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
-  const { sendMessage, lastMessage } = useWebSocket(
-    `${REACT_APP_WS_SERVER}/customer`,
-    { onOpen: () => sendMessage(cookies['desafioNative-token']) },
-  );
+  const socket = io(REACT_APP_WS_SERVER, {
+    auth: {
+      token: cookies['desafioNative-token'],
+    },
+  });
 
   const fetchTotalCustomersByCity = async () => {
     const response = await axios.get(
@@ -43,7 +44,7 @@ const CustomerProvider = ({ children }) => {
 
   const updateCustomerById = async (id, payload) => {
     const url = `${REACT_APP_SERVER}/customer/${id}`;
-    sendMessage(JSON.stringify({ id, ...payload }));
+    socket.emit('updateCustomer', { id, ...payload });
     try {
       const response = await axios.patch(
         url,
@@ -76,20 +77,15 @@ const CustomerProvider = ({ children }) => {
   }, [ location ]);
 
   useEffect(() => {
-    try {
-      const user = JSON.parse(lastMessage.data);
-      if (user && typeof user === 'object') {
-        setCustomers((curValue) => (
-          curValue.map((stateUser) => stateUser.id === user.id
-            ? user
-            : stateUser,
-          )
-        ));
-      }
-    } catch (e) {
-      return;
-    }
-  }, [lastMessage]);
+    socket.on('updatedCustomer', (updatedCustomer) => {
+      setCustomers((curValue) => (
+        curValue.map((stateCustomer) => stateCustomer.id === updatedCustomer.id
+          ? updatedCustomer
+          : stateCustomer,
+        )
+      ));
+    });
+  }, []);
 
   return (
     <CustomerContext.Provider value={value}>
