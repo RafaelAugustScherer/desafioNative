@@ -9,6 +9,8 @@ import {
   InputAdornment,
   IconButton,
   Typography,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import ErrorAlert from '../components/ErrorAlert';
@@ -22,6 +24,7 @@ const Login = () => {
   });
   const [ showPassword, setShowPassword ] = useState(false);
   const [ loginError, setLoginError ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = ({ target: { name, value } }) => (
     setFormData({ ...formData, [ name ]: value })
@@ -29,6 +32,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setTimeout(() => setIsLoading(true), 1000);
 
     const { REACT_APP_SERVER } = process.env;
 
@@ -44,8 +48,13 @@ const Login = () => {
       );
       return navigate('/');
     } catch (e) {
-      const { error } = e.response.data;
-      setLoginError(error);
+      if (e.response.data) {
+        const { error } = e.response.data;
+        setLoginError(error);
+      } else {
+        setLoginError(e.message);
+      }
+      setIsLoading(false);
     }
   };
 
@@ -63,6 +72,16 @@ const Login = () => {
         Login
       </Typography>
       <Box sx={{ '&& > *': { my: 2 } }}>
+        {
+          isLoading && (
+            <Alert severity="info" icon={false}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <CircularProgress color="info" sx={{ mr: 2 }} />
+                <Typography component="p" variant="h6">Inicializando back-end</Typography>
+              </Box>
+            </Alert>
+          )
+        }
         {
           loginError && (
             <ErrorAlert content={loginError} setContent={setLoginError} />
